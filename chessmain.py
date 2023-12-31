@@ -4,7 +4,7 @@
 """
 
 import pygame as p
-from chessengine import Gamestate
+from chessengine import Gamestate, Move
 
 # variables declarations
 p.init()
@@ -25,7 +25,8 @@ IMAGES = {}
 def loadImages():
     pieces = ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR", "wp", "bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR", "bp"]
     for piece in pieces:
-        IMAGES[piece] = p.transform.scale(p.image.load(f"images/{piece}.png"), (SQ_SIZE, SQ_SIZE))
+        image = p.image.load(f"images/{piece}.png")
+        IMAGES[piece] = p.transform.scale(image, (SQ_SIZE, SQ_SIZE))
 
     # NOTE YOU CAN ACCESS AN IMAGE BY IMAGES['wp']
 
@@ -44,6 +45,7 @@ def main():
     running = True
     sqSelected = ()
     playerClicks = []  # keeps track of the player clicks, this is a tuple: [(6, 4)]
+    print(playerClicks)
     while running:
         for e in p.event.get():
             if e.type == p.QUIT:
@@ -58,8 +60,13 @@ def main():
                 else:
                     sqSelected = (row, col)
                     playerClicks.append(sqSelected)
+                    print(playerClicks)
                 if len(playerClicks) == 2:
-                    ...
+                    move = Move(playerClicks[0], playerClicks[1], gs.board)
+                    print(move.get_chess_notations())
+                    gs.makeMove(move)
+                    sqSelected = ()
+                    playerClicks = []
 
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)

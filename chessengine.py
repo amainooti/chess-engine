@@ -23,12 +23,15 @@ class Gamestate:
         self.whiteToMove = True
         self.moveLog = []
 
-        def makeMove(self, move):
-            pass
+    def makeMove(self, move):
+        self.board[move.startRow][move.startCol] = "--"
+        self.board[move.endRow][move.endCol] = move.pieceMoved
+        self.moveLog.append(move) # log the move
+        self.whiteToMove = not self.whiteToMove
 
 
 
-class Move:
+class Move():
     ranks_to_rows = {
         "1": 7, "2": 6 , "3": 5 , "4": 4 , "5": 3,
         "6": 2, "7": 1, "8": 0,
@@ -49,7 +52,7 @@ class Move:
         self.pieceCaptured = board[self.endRow][self.endCol]
 
     def get_chess_notations(self):
-        return self.get_rank_files(startRow, startCol) + self.get_rank_files(self.endRow, self.endCol)
+        return self.get_rank_files(self.startRow, self.startCol) + self.get_rank_files(self.endRow, self.endCol)
 
 
     def get_rank_files(self, r, c):
