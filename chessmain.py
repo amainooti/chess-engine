@@ -41,6 +41,8 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = Gamestate()
+    validMoves = gs.getValidMoves()
+    moveMade = False #flag variable for when a move is made
     loadImages()  # only do this once
     running = True
     sqSelected = ()
@@ -54,8 +56,8 @@ def main():
                 x, y = p.mouse.get_pos()
                 col = x // SQ_SIZE
                 row = y // SQ_SIZE
-                if sqSelected == (row, col):  # undo selection
-                    sqSelected = ()
+                if sqSelected == (row, col):
+                    sqSelected = ()  # undo selection
                     playerClicks = []
                 else:
                     sqSelected = (row, col)
@@ -64,9 +66,21 @@ def main():
                 if len(playerClicks) == 2:
                     move = Move(playerClicks[0], playerClicks[1], gs.board)
                     print(move.get_chess_notations())
+                    if move in validMoves:
+                        gs.makeMove(move)
+                        moveMade = True
                     gs.makeMove(move)
-                    sqSelected = ()
-                    playerClicks = []
+                    sqSelected = () # reset the selection
+                    playerClicks = [] # list of player clicks
+            # Undo moves
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gs.undoMove()
+                    moveMade = True
+
+        if moveMade:
+            validMoves = gs.getValidMoves()
+            moveMade = False
 
         drawGameState(screen, gs)
         clock.tick(MAX_FPS)
